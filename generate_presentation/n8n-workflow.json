@@ -1,0 +1,225 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "upload-summary",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "3b937c7e-7a16-4b30-b1db-ab7cd0bc7f9e",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -16
+      ],
+      "webhookId": "8878d28b-16b3-4375-b412-d6e7ab6f69b4"
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "model": "gpt-4o",
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "={{ $json.prompts }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "id": "f1325800-b3b5-4b28-8736-839fbad4499f",
+      "name": "OpenAI Summary",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        896,
+        -16
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "PTnL6JdLWJkUKQxR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json[\"results\"]}}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1360,
+        -16
+      ],
+      "id": "f0ad906b-e51e-48e8-a3b4-69bce8aa28be",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -16
+      ],
+      "id": "6aa9f8b1-7999-4804-8a93-28a865b2c021",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  \"json\": {\n    \"prompts\":   [`Summarize the following content in 3-5 sentences:\\n\\n${$input.first().json.text}`,\n    `You are an assistant that transforms raw text into a Slidev-compatible Markdown slide deck.\n\nPlease follow these rules:\n- Use Slidev formatting: separate each slide with exactly \"---\" on its own line.\n- Use \"#\" for main slide titles.\n- Use \"##\" or \"###\" for subheadings and structure.\n- Use bullet lists (\"-\") and bold text (\"**\") as needed.\n- Ensure each slide is self-contained, concise, and clean.\n- Output a valid Slidev Markdown file without extra explanations.\n\nHere is the source text::\\n\\n${$input.first().json.text}`]\n  }\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -16
+      ],
+      "id": "71994416-f7aa-45f4-9177-e3ff05997b9b",
+      "name": "Get Prompts"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "prompts",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        672,
+        -16
+      ],
+      "id": "92f2c2bd-6ad5-4218-868f-1e2138854f46",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nlet index = 0\nconst results = {} \nfor (const item of $input.all()) {\n  const content = item.json.message.content\n  if (index === 0){\n    results.summary =content\n  } else if (index === 1){\n    results.presentation = content\n  }\n  index += 1\n}\n\nreturn { \"json\": {results}}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        -16
+      ],
+      "id": "7e4e61f9-0ec1-4f88-aac5-6a8b00130d70",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Summary": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Get Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Prompts": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9dcc738c-435f-4c7a-a8ab-e83b9ed80e68",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "270e5bcdd2d27d129e2a5941654814a3271904a168cb8962f01525235e4a5f5b"
+  },
+  "id": "hOmt57qxbAru82Jv",
+  "tags": []
+}
