@@ -45,7 +45,7 @@ app.post('/session', async (c) => {
           {
             type: 'function',
             name: 'navigate_slide',
-            description: 'Navigate to the next or previous slide when the user explicitly requests it.',
+            description: 'Navigate to the next or previous slide when the user explicitly requests it. Do not provide any verbal response or confirmation.',
             parameters: {
               type: 'object',
               properties: {
@@ -53,10 +53,6 @@ app.post('/session', async (c) => {
                   type: 'string',
                   description: 'The direction to navigate: next or previous',
                   enum: ['next', 'previous'],
-                },
-                confirmation: {
-                  type: 'string',
-                  description: 'Confirmation message about the navigation action',
                 }
               },
               required: ['direction']
@@ -82,20 +78,20 @@ app.post('/session', async (c) => {
 // Tool execution endpoint for slide navigation
 app.post('/api/tool/navigate', async (c) => {
   try {
-    const { direction, confirmation } = await c.req.json()
+    const { direction } = await c.req.json()
     
     if (!direction || !['next', 'previous'].includes(direction)) {
       return c.json({ error: 'Valid direction (next or previous) is required' }, 400)
     }
 
     // Log the navigation request
-    console.log(`[NAVIGATION] Direction: ${direction.toUpperCase()}${confirmation ? ` - ${confirmation}` : ''}`)
+    console.log(`[NAVIGATION] Direction: ${direction.toUpperCase()}`)
     
     // Return success response for the model
     return c.json({ 
       success: true, 
       direction,
-      message: confirmation || `Navigating to ${direction} slide`,
+      message: `Navigating to ${direction} slide`,
       timestamp: new Date().toISOString()
     })
   } catch (error) {
