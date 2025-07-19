@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import 'dotenv/config'
+import { tools } from './tools.js'
 
 const app = new Hono()
 
@@ -41,24 +42,7 @@ app.post('/session', async (c) => {
       body: JSON.stringify({
         model: 'gpt-4o-realtime-preview-2025-06-03',
         voice: 'verse',
-        tools: [
-          {
-            type: 'function',
-            name: 'navigate_slide',
-            description: 'Navigate to the next or previous slide when the user explicitly requests it. Do not provide any verbal response or confirmation.',
-            parameters: {
-              type: 'object',
-              properties: {
-                direction: {
-                  type: 'string',
-                  description: 'The direction to navigate: next or previous',
-                  enum: ['next', 'previous'],
-                }
-              },
-              required: ['direction']
-            }
-          }
-        ],
+        tools: tools,
         tool_choice: 'auto'
       }),
     })
@@ -97,6 +81,44 @@ app.post('/api/tool/navigate', async (c) => {
   } catch (error) {
     console.error('Error processing navigation:', error)
     return c.json({ error: 'Failed to process navigation' }, 500)
+  }
+})
+
+// Tool execution endpoint for enabling voice
+app.post('/api/tool/enable-voice', async (c) => {
+  try {
+    // Log the voice enable request
+    console.log(`[VOICE] Enabling voice mode`)
+    
+    // Return success response for the model
+    return c.json({ 
+      success: true, 
+      action: 'enable_voice',
+      message: 'Voice mode enabled',
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    console.error('Error enabling voice:', error)
+    return c.json({ error: 'Failed to enable voice' }, 500)
+  }
+})
+
+// Tool execution endpoint for disabling voice
+app.post('/api/tool/disable-voice', async (c) => {
+  try {
+    // Log the voice disable request
+    console.log(`[VOICE] Disabling voice mode`)
+    
+    // Return success response for the model
+    return c.json({ 
+      success: true, 
+      action: 'disable_voice',
+      message: 'Voice mode disabled',
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    console.error('Error disabling voice:', error)
+    return c.json({ error: 'Failed to disable voice' }, 500)
   }
 })
 

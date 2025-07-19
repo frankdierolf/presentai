@@ -11,15 +11,20 @@
       class="realtime-button"
     >
       <span v-if="connecting">Connecting...</span>
-      <span v-else-if="connected && !recording">🎤 Start Recording</span>
-      <span v-else-if="recording">🛑 Stop Recording</span>
-      <span v-else>🗣️ Connect to AI</span>
+      <span v-else-if="connected && !recording">🎤 Voice Commands Active</span>
+      <span v-else-if="recording">🎤 Listening...</span>
+      <span v-else>🗣️ Enable Voice Commands</span>
     </button>
     
     <div v-if="status" class="status">{{ status }}</div>
     
+    <div v-if="connected" class="voice-mode-indicator" :class="{ 'voice-enabled': voiceModeEnabled }">
+      <span v-if="voiceModeEnabled">🔊 Voice Mode: ON</span>
+      <span v-else>🔇 Voice Mode: OFF</span>
+    </div>
+    
     <div v-if="transcript" class="transcript">
-      <strong>Transcript:</strong> {{ transcript }}
+      <strong>You said:</strong> {{ transcript }}
     </div>
     
     <div v-if="notifications.length > 0" class="notifications">
@@ -45,6 +50,7 @@ const nav = useNav()
 const connecting = ref(false)
 const connected = ref(false)
 const recording = ref(false)
+const voiceModeEnabled = ref(false)
 const status = ref('')
 const transcript = ref('')
 const notifications = ref([])
@@ -93,6 +99,29 @@ function navigateSlide(direction) {
   }
 }
 
+// Voice mode controls
+function enableVoiceMode() {
+  voiceModeEnabled.value = true
+  addStatusNotification('Voice mode enabled - you will hear AI responses', 'success')
+  
+  // Enable audio playback if audio element exists
+  if (audioElement) {
+    audioElement.volume = 1.0
+    audioElement.muted = false
+  }
+}
+
+function disableVoiceMode() {
+  voiceModeEnabled.value = false
+  addStatusNotification('Voice mode disabled - silent mode active', 'info')
+  
+  // Disable audio playback if audio element exists
+  if (audioElement) {
+    audioElement.volume = 0.0
+    audioElement.muted = true
+  }
+}
+
 // Fetch ephemeral token from backend
 async function fetchEphemeralToken() {
   try {
@@ -123,21 +152,10 @@ async function initializeWebRTC() {
     
     const ephemeralKey = await fetchEphemeralToken()
     
-    status.value = 'Setting up WebRTC connection...'
+    status.value = 'Setting up voice commands...'
     
     // Create peer connection
     peerConnection = new RTCPeerConnection()
-    
-    // Set up audio element for remote audio from the model
-    audioElement = document.createElement('audio')
-    audioElement.autoplay = true
-    audioElement.controls = false
-    document.body.appendChild(audioElement)
-    
-    peerConnection.ontrack = (event) => {
-      console.log('Received remote audio track')
-      audioElement.srcObject = event.streams[0]
-    }
     
     // Add local audio track for microphone input
     status.value = 'Requesting microphone access...'
@@ -152,7 +170,35 @@ async function initializeWebRTC() {
       console.log('Data channel opened')
       connected.value = true
       connecting.value = false
-      status.value = 'Connected! Ready to chat.'
+      status.value = 'Voice commands ready! Say "next slide", "previous slide", "enable voice", or "disable voice"'
+    })
+    
+    // Handle incoming audio track for voice output
+    peerConnection.addEventListener('track', (event) => {
+      const [remoteStream] = event.streams
+      console.log('Received remote audio stream')
+      
+      // Create audio element if it doesn't exist
+      if (!audioElement) {
+        audioElement = new Audio()
+        audioElement.autoplay = true
+      }
+      
+      // Always set the stream, but control playback with volume
+      audioElement.srcObject = remoteStream
+      
+      // Control audio playback based on voice mode
+      if (voiceModeEnabled.value) {
+        audioElement.volume = 1.0
+        audioElement.muted = false
+      } else {
+        audioElement.volume = 0.0
+        audioElement.muted = true
+      }
+      
+      audioElement.play().catch(error => {
+        console.error('Error playing audio:', error)
+      })
     })
     
     // Start the session using Session Description Protocol (SDP)
@@ -182,7 +228,7 @@ async function initializeWebRTC() {
     await peerConnection.setRemoteDescription(answer)
     
     // Connection ready
-    addStatusNotification('AI Assistant connected and ready!', 'success')
+    addStatusNotification('Voice commands activated!', 'success')
     
   } catch (error) {
     console.error('Failed to initialize WebRTC:', error)
@@ -201,23 +247,23 @@ function handleServerEvent(event) {
     switch (serverEvent.type) {
       case 'session.created':
         console.log('Session created successfully')
-        status.value = 'Session ready!'
+        status.value = 'Voice commands ready!'
         break
         
       case 'input_audio_buffer.speech_started':
         recording.value = true
-        status.value = 'Listening...'
+        status.value = 'Listening for commands...'
         break
         
       case 'input_audio_buffer.speech_stopped':
         recording.value = false
-        status.value = 'Processing...'
+        status.value = 'Processing command...'
         break
         
-      case 'response.audio_transcript.delta':
-        // Update transcript as model speaks
-        if (serverEvent.delta) {
-          transcript.value += serverEvent.delta
+      case 'conversation.item.input_audio_transcription.completed':
+        // Show what the user said
+        if (serverEvent.transcript) {
+          transcript.value = serverEvent.transcript
         }
         break
         
@@ -225,11 +271,21 @@ function handleServerEvent(event) {
         // Check if this is a function call
         if (serverEvent.response.output && serverEvent.response.output.length > 0) {
           const output = serverEvent.response.output[0]
-          if (output.type === 'function_call' && output.name === 'navigate_slide') {
-            handleNavigationCall(output)
+          if (output.type === 'function_call') {
+            switch (output.name) {
+              case 'navigate_slide':
+                handleNavigationCall(output)
+                break
+              case 'enable_voice':
+                handleVoiceControlCall(output, 'enable')
+                break
+              case 'disable_voice':
+                handleVoiceControlCall(output, 'disable')
+                break
+            }
           }
         }
-        status.value = 'Response complete. Say something!'
+        status.value = 'Ready for next command...'
         break
         
       case 'error':
@@ -295,6 +351,61 @@ async function handleNavigationCall(functionCall) {
   }
 }
 
+// Handle voice control calls from the model
+async function handleVoiceControlCall(functionCall, action) {
+  try {
+    console.log('Voice control call received:', functionCall, action)
+    
+    const endpoint = action === 'enable' ? '/api/tool/enable-voice' : '/api/tool/disable-voice'
+    
+    // Execute the voice control tool via backend
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    })
+    
+    const result = await response.json()
+    
+    if (response.ok) {
+      // Perform the actual voice mode change
+      if (action === 'enable') {
+        enableVoiceMode()
+      } else {
+        disableVoiceMode()
+      }
+      
+      // Send function result back to the model
+      const functionResult = {
+        type: 'conversation.item.create',
+        item: {
+          type: 'function_call_output',
+          call_id: functionCall.call_id,
+          output: JSON.stringify(result)
+        }
+      }
+      
+      dataChannel.send(JSON.stringify(functionResult))
+      
+      // Create a new response
+      const responseCreate = {
+        type: 'response.create'
+      }
+      dataChannel.send(JSON.stringify(responseCreate))
+      
+    } else {
+      console.error('Voice control execution failed:', result)
+      addStatusNotification('Failed to execute voice control', 'error')
+    }
+    
+  } catch (error) {
+    console.error('Failed to handle voice control call:', error)
+    addStatusNotification('Error processing voice control', 'error')
+  }
+}
+
 // Disconnect from the session
 function disconnect() {
   if (peerConnection) {
@@ -308,13 +419,15 @@ function disconnect() {
   }
   
   if (audioElement) {
-    audioElement.remove()
+    audioElement.pause()
+    audioElement.srcObject = null
     audioElement = null
   }
   
   connected.value = false
   connecting.value = false
   recording.value = false
+  voiceModeEnabled.value = false
   status.value = ''
   transcript.value = ''
 }
@@ -404,6 +517,23 @@ onUnmounted(() => {
   word-wrap: break-word;
 }
 
+.voice-mode-indicator {
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 2px solid #dee2e6;
+}
+
+.voice-mode-indicator.voice-enabled {
+  background: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
 .notifications {
   display: flex;
   flex-direction: column;
@@ -436,6 +566,22 @@ onUnmounted(() => {
   border: 1px solid #ffeaa7;
 }
 
+.notification-error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .notification-error {
   background: #f8d7da;
   color: #721c24;
