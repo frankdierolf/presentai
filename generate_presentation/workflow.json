@@ -1,0 +1,85 @@
+{
+  "name": "File-to-Summary (OpenAI)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "upload-summary",
+        "options": {
+          "binaryPropertyName": "file"
+        }
+      },
+      "id": "Webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "operation": "binaryToText",
+        "sourceBinaryPropertyName": "file",
+        "destinationBinaryPropertyName": "file",
+        "dataPropertyName": "text",
+        "encoding": "utf8"
+      },
+      "id": "Binary → Text",
+      "name": "Binary → Text",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "item.prompt = `Summarize the following content in 3-5 sentences:\\n\\n${item.text}`;\nreturn item;"
+      },
+      "id": "Construct Prompt",
+      "name": "Construct Prompt",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "resource": "chatCompletion",
+        "model": "gpt-3.5-turbo",
+        "messages": [
+          {
+            "role": "user",
+            "content": "={{$json[\"prompt\"]}}"
+          }
+        ]
+      },
+      "id": "OpenAI Summary",
+      "name": "OpenAI Summary",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [800, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "OPENAI_CRED_ID",
+          "name": "OpenAI Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "Return Summary",
+      "name": "Return Summary",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1000, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Binary → Text", "type": "main", "index": 0 }]] },
+    "Binary → Text": { "main": [[{ "node": "Construct Prompt", "type": "main", "index": 0 }]] },
+    "Construct Prompt": { "main": [[{ "node": "OpenAI Summary", "type": "main", "index": 0 }]] },
+    "OpenAI Summary": { "main": [[{ "node": "Return Summary", "type": "main", "index": 0 }]] }
+  },
+  "settings": {},
+  "version": 1
+}
