@@ -1,2 +1,4 @@
-hey
-julien
+
+# presentai 
+
+Berlin AI hackathon
