@@ -44,23 +44,22 @@ app.post('/session', async (c) => {
         tools: [
           {
             type: 'function',
-            name: 'send_notification',
-            description: 'Send a notification to the user with a message.',
+            name: 'navigate_slide',
+            description: 'Navigate to the next or previous slide when the user explicitly requests it.',
             parameters: {
               type: 'object',
               properties: {
-                message: {
+                direction: {
                   type: 'string',
-                  description: 'The notification message to display to the user',
+                  description: 'The direction to navigate: next or previous',
+                  enum: ['next', 'previous'],
                 },
-                type: {
+                confirmation: {
                   type: 'string',
-                  description: 'The type of notification',
-                  enum: ['info', 'success', 'warning', 'error'],
-                  default: 'info'
+                  description: 'Confirmation message about the navigation action',
                 }
               },
-              required: ['message']
+              required: ['direction']
             }
           }
         ],
@@ -80,28 +79,28 @@ app.post('/session', async (c) => {
   }
 })
 
-// Tool execution endpoint for notifications
-app.post('/api/tool/notification', async (c) => {
+// Tool execution endpoint for slide navigation
+app.post('/api/tool/navigate', async (c) => {
   try {
-    const { message, type = 'info' } = await c.req.json()
+    const { direction, confirmation } = await c.req.json()
     
-    if (!message) {
-      return c.json({ error: 'Message is required' }, 400)
+    if (!direction || !['next', 'previous'].includes(direction)) {
+      return c.json({ error: 'Valid direction (next or previous) is required' }, 400)
     }
 
-    // Log the notification (in a real app, you might store this in a database)
-    console.log(`[NOTIFICATION] ${type.toUpperCase()}: ${message}`)
+    // Log the navigation request
+    console.log(`[NAVIGATION] Direction: ${direction.toUpperCase()}${confirmation ? ` - ${confirmation}` : ''}`)
     
     // Return success response for the model
     return c.json({ 
       success: true, 
-      message: `Notification sent: ${message}`,
-      type,
+      direction,
+      message: confirmation || `Navigating to ${direction} slide`,
       timestamp: new Date().toISOString()
     })
   } catch (error) {
-    console.error('Error processing notification:', error)
-    return c.json({ error: 'Failed to process notification' }, 500)
+    console.error('Error processing navigation:', error)
+    return c.json({ error: 'Failed to process navigation' }, 500)
   }
 })
 

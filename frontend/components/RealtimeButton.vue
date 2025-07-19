@@ -36,6 +36,10 @@
 
 <script setup>
 import { ref, onUnmounted } from 'vue'
+import { useNav } from '@slidev/client'
+
+// Access Slidev navigation
+const nav = useNav()
 
 // State management
 const connecting = ref(false)
@@ -53,9 +57,9 @@ let audioElement = null
 // Backend API base URL
 const API_BASE = 'http://localhost:3000'
 
-// Notification management
+// Status notification management
 let notificationId = 0
-function addNotification(message, type = 'info') {
+function addStatusNotification(message, type = 'info') {
   const notification = {
     id: ++notificationId,
     message,
@@ -64,24 +68,28 @@ function addNotification(message, type = 'info') {
   }
   notifications.value.push(notification)
   
-  // Show browser notification if permission granted
-  if (Notification.permission === 'granted') {
-    new Notification('AI Assistant', { body: message })
-  }
-  
-  // Auto-remove after 5 seconds
+  // Auto-remove after 3 seconds
   setTimeout(() => {
     const index = notifications.value.findIndex(n => n.id === notification.id)
     if (index > -1) {
       notifications.value.splice(index, 1)
     }
-  }, 5000)
+  }, 3000)
 }
 
-// Request notification permission
-async function requestNotificationPermission() {
-  if ('Notification' in window && Notification.permission === 'default') {
-    await Notification.requestPermission()
+// Navigation function
+function navigateSlide(direction) {
+  try {
+    if (direction === 'next') {
+      nav.next()
+      addStatusNotification('Navigated to next slide', 'success')
+    } else if (direction === 'previous') {
+      nav.prev()
+      addStatusNotification('Navigated to previous slide', 'success')
+    }
+  } catch (error) {
+    console.error('Navigation error:', error)
+    addStatusNotification('Failed to navigate slide', 'error')
   }
 }
 
@@ -173,14 +181,14 @@ async function initializeWebRTC() {
     }
     await peerConnection.setRemoteDescription(answer)
     
-    // Request notification permission
-    await requestNotificationPermission()
+    // Connection ready
+    addStatusNotification('AI Assistant connected and ready!', 'success')
     
   } catch (error) {
     console.error('Failed to initialize WebRTC:', error)
     status.value = `Connection failed: ${error.message}`
     connecting.value = false
-    addNotification(`Connection failed: ${error.message}`, 'error')
+    addStatusNotification(`Connection failed: ${error.message}`, 'error')
   }
 }
 
@@ -217,8 +225,8 @@ function handleServerEvent(event) {
         // Check if this is a function call
         if (serverEvent.response.output && serverEvent.response.output.length > 0) {
           const output = serverEvent.response.output[0]
-          if (output.type === 'function_call' && output.name === 'send_notification') {
-            handleFunctionCall(output)
+          if (output.type === 'function_call' && output.name === 'navigate_slide') {
+            handleNavigationCall(output)
           }
         }
         status.value = 'Response complete. Say something!'
@@ -227,7 +235,7 @@ function handleServerEvent(event) {
       case 'error':
         console.error('Server error:', serverEvent)
         status.value = `Error: ${serverEvent.message}`
-        addNotification(`AI Error: ${serverEvent.message}`, 'error')
+        addStatusNotification(`AI Error: ${serverEvent.message}`, 'error')
         break
     }
   } catch (error) {
@@ -235,28 +243,28 @@ function handleServerEvent(event) {
   }
 }
 
-// Handle function calls from the model
-async function handleFunctionCall(functionCall) {
+// Handle navigation calls from the model
+async function handleNavigationCall(functionCall) {
   try {
-    console.log('Function call received:', functionCall)
+    console.log('Navigation call received:', functionCall)
     
     const args = JSON.parse(functionCall.arguments)
-    const { message, type = 'info' } = args
+    const { direction, confirmation } = args
     
-    // Execute the notification tool via backend
-    const response = await fetch(`${API_BASE}/api/tool/notification`, {
+    // Execute the navigation tool via backend
+    const response = await fetch(`${API_BASE}/api/tool/navigate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message, type }),
+      body: JSON.stringify({ direction, confirmation }),
     })
     
     const result = await response.json()
     
     if (response.ok) {
-      // Show notification to user
-      addNotification(message, type)
+      // Perform the actual slide navigation
+      navigateSlide(direction)
       
       // Send function result back to the model
       const functionResult = {
@@ -277,13 +285,13 @@ async function handleFunctionCall(functionCall) {
       dataChannel.send(JSON.stringify(responseCreate))
       
     } else {
-      console.error('Tool execution failed:', result)
-      addNotification('Failed to execute notification', 'error')
+      console.error('Navigation execution failed:', result)
+      addStatusNotification('Failed to execute navigation', 'error')
     }
     
   } catch (error) {
-    console.error('Failed to handle function call:', error)
-    addNotification('Error processing tool call', 'error')
+    console.error('Failed to handle navigation call:', error)
+    addStatusNotification('Error processing navigation', 'error')
   }
 }
 
