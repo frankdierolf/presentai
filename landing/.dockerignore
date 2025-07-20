@@ -1,0 +1,78 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+.nuxt/
+.output/
+dist/
+build/
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files (handle via Coolify)
+.env*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.temp/
+
+# Docker files (avoid recursive copying)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Nixpacks files (no longer needed)
+.nixpacks.toml
+
+# Test files
+test/
+tests/
+*.test.*
+*.spec.*
+
+# Documentation
+README.md
+*.md
+!package.json
+
+# Backup files
+*.bak
+*.backup
