@@ -3,7 +3,7 @@
     <div class="mx-auto w-full max-w-sm space-y-4">
       <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto" />
       <div class="text-center">
-        <p class="text-2xl font-bold font-display">Sign in to Supersaas</p>
+        <p class="text-2xl font-bold font-display">Sign in to Presento</p>
         <p class="text-sm text-neutral-500">
           Dont have an account?
           <UButton

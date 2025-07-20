@@ -5,13 +5,10 @@
       <WebsiteSection class="flex w-full items-center justify-between">
         <NuxtLink to="/" class="flex items-center gap-2">
           <img src="/logo.png" alt="logo" class="h-6 w-auto md:h-7" />
-          <p class="font-bold">Pocketvue</p>
+          <p class="font-bold">Presento</p>
         </NuxtLink>
         <div class="hidden flex-1 items-center justify-center gap-3 md:flex">
-          <UButton label="Features" color="neutral" variant="ghost" />
-          <UButton label="Pricing" color="neutral" variant="ghost" />
-          <UButton label="Blog" color="neutral" variant="ghost" />
-          <UButton label="Docs" color="neutral" variant="ghost" />
+          <UButton label="Github" color="neutral" variant="ghost" :to="'https://github.com/frankdierolf/presentai'" />
         </div>
         <div class="flex items-center gap-3">
           <ThemeToggleButton />
@@ -40,12 +37,10 @@
               <p
                 class="text-4xl font-bold tracking-tight text-balance sm:text-6xl font-display"
               >
-                Build SaaS Apps at Lightning Speed with PocketVue
+                Present with AI, unleash the Power.
               </p>
               <p class="text-sm text-balance text-neutral-500 sm:text-xl">
-                The ultimate Nuxt.js + PocketBase starter kit that combines
-                beautiful UI, real-time features, and developer-friendly tools.
-                Launch your next project in days, not months.
+              AI-powered presentations with voice control and smart content generation. Built for Berlin AI Hackathon - the future of presenting.
               </p>
 
               <div class="flex items-center justify-center gap-3">
@@ -61,11 +56,12 @@
                   :to="user ? '/dashboard' : '/auth/register'"
                 />
                 <UButton
-                  label="Get a demo"
+                  label="Showcase"
                   color="neutral"
                   variant="ghost"
                   size="xl"
                   class="rounded-2xl"
+                  :to="'https://demo.presento.app'"
                 />
               </div>
             </div>
@@ -77,12 +73,12 @@
           class="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 p-1 md:rounded-3xl md:p-2 dark:border-white/10 dark:bg-neutral-950"
         >
           <img
-            src="/mock-image-light.jpg"
+            src="https://i.ibb.co/w1pLDpN/Screenshot-From-2025-07-20-13-54-53.png"
             alt="Dashboard"
             class="aspect-video w-full rounded-md border border-neutral-200 md:rounded-2xl dark:hidden dark:border-white/10"
           />
           <img
-            src="/mock-image-dark.jpg"
+            src="https://i.ibb.co/w1pLDpN/Screenshot-From-2025-07-20-13-54-53.png"
             alt="Dashboard"
             class="hidden aspect-video w-full rounded-2xl border border-neutral-200 dark:block dark:border-white/10"
           />
@@ -126,7 +122,7 @@
           Get Notified When We Launch
         </h2>
         <p class="mx-auto mt-6 max-w-xl text-center text-base text-neutral-500">
-          Effortlessly build a fullstack SaaS apps with Nuxt and Pocketbase.
+          Effortlessly do Presentation with Presento
         </p>
       </div>
       <UForm

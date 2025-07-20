@@ -5,8 +5,8 @@
       :class="contentClass"
     >
       <div class="flex items-center gap-2">
-        <img alt="Pocketfully Logo" class="h-8 w-auto" src="/logo.png" />
-        <span class="font-bold text-lg font-display">Supersaas</span>
+        <img alt="Presento Logo" class="h-8 w-auto" src="/logo.png" />
+        <span class="font-bold text-lg font-display">Presento</span>
       </div>
 
       <NuxtLink
