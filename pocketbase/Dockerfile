@@ -1,8 +1,8 @@
 # Production Dockerfile for Pocketbase
 FROM alpine:latest
 
-# Install required packages including wget for downloading PocketBase
-RUN apk add --no-cache ca-certificates tzdata sqlite wget unzip && \
+# Install required packages including wget for downloading PocketBase and curl for healthcheck
+RUN apk add --no-cache ca-certificates tzdata sqlite wget unzip curl && \
     addgroup -g 1001 -S pocketbase && \
     adduser -u 1001 -S -G pocketbase pocketbase
 
@@ -10,7 +10,7 @@ RUN apk add --no-cache ca-certificates tzdata sqlite wget unzip && \
 RUN mkdir -p /pb/pb_data /pb/pb_public /pb/pb_hooks /pb/pb_migrations
 
 # Download and install PocketBase binary
-ARG POCKETBASE_VERSION=0.22.21
+ARG POCKETBASE_VERSION=0.29.0
 RUN wget https://github.com/pocketbase/pocketbase/releases/download/v${POCKETBASE_VERSION}/pocketbase_${POCKETBASE_VERSION}_linux_amd64.zip -O /tmp/pocketbase.zip && \
     unzip /tmp/pocketbase.zip -d /tmp && \
     mv /tmp/pocketbase /pb/pocketbase && \
@@ -41,8 +41,8 @@ VOLUME ["/pb/pb_data", "/pb/pb_public"]
 ENV SQLITE_TMPDIR=/pb/pb_data/tmp
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD curl --fail http://localhost:8080/api/health || exit 1
 
 # Default command
 ENTRYPOINT ["/pb/pocketbase"]
