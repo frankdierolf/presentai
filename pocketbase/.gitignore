@@ -1,0 +1,11 @@
+node_modules
+
+.env
+
+##  Pocketbase
+pb_data/
+pb_data/**
+pb_migrations/
+*.db
+pocketbase
+pocketbase.exe
