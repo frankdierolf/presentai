@@ -28,7 +28,7 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/ui',
-    '@nuxt/eslint',
+    // '@nuxt/eslint', // Disabled for Nixpacks compatibility - causes oxc-parser issues
     '@formkit/auto-animate/nuxt',
     '@nuxtjs/mdc',
   ],

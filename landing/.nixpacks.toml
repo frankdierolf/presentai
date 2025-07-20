@@ -1,0 +1,30 @@
+[variables]
+# Disable problematic native bindings
+DISABLE_ESLINT = "true"
+SKIP_POSTCSS_INSTALL = "true"
+
+[build]
+# Use Node.js 20 for better compatibility
+nixpacksVersion = "1.15.0"
+
+[phases.setup]
+nixPkgs = ["...", "python3"]
+
+[phases.install]
+cmds = [
+    "corepack enable",
+    "corepack prepare pnpm@latest --activate",
+]
+
+[phases.build]
+cmds = [
+    # Install dependencies without postinstall to avoid oxc-parser issues
+    "pnpm install --frozen-lockfile --ignore-scripts",
+    # Run nuxt prepare separately with error handling
+    "pnpm nuxt prepare || echo 'Warning: nuxt prepare failed, continuing...'",
+    # Build the application
+    "pnpm run build"
+]
+
+[start]
+cmd = "node .output/server/index.mjs"
