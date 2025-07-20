@@ -503,6 +503,11 @@ async function handleFeedbackCall(functionCall) {
   try {
     console.log('Feedback call received:', functionCall)
     
+    // Automatically enable voice mode for feedback
+    if (!voiceModeEnabled.value) {
+      enableVoiceMode()
+    }
+    
     // Get current slide content
     const slideContent = getCurrentSlideContent()
     console.log('Current slide content:', slideContent)

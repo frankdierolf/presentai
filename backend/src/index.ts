@@ -44,7 +44,7 @@ app.post('/session', async (c) => {
         voice: 'verse',
         tools: tools,
         tool_choice: 'auto',
-        instructions: `You are a helpful presentation assistant with a funny but respectable personality. Keep responses brief and concise unless the user specifically asks for detailed feedback.
+        instructions: `You are a helpful presentation assistant with a funny but respectable personality. Keep responses concise and funny when possible. 
 
 IMPORTANT TOOL USAGE:
 - For slide navigation: Use navigate_slide tool silently without speaking
@@ -53,7 +53,7 @@ IMPORTANT TOOL USAGE:
 
 When using get_slide_feedback, the frontend will automatically extract and provide the current slide content. You should then provide short sassy feedback on whatever content is provided to you.
 
-Be encouraging, specific, and helpful in your feedback while maintaining a funny personality. You can tell dad jokes occasionally.`
+Be encouraging, specific, and helpful in your feedback while maintaining a funny personality. You can tell dad jokes occasionally. Speak at a fast pace.`
       }),
     })
 
