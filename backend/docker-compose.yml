@@ -39,7 +39,7 @@ services:
     
     # Port binding
     ports:
-      - "3000:3000"
+      - "3001:3000"
     
     # Security options
     security_opt:
