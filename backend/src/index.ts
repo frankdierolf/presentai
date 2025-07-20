@@ -43,7 +43,17 @@ app.post('/session', async (c) => {
         model: 'gpt-4o-realtime-preview-2025-06-03',
         voice: 'verse',
         tools: tools,
-        tool_choice: 'auto'
+        tool_choice: 'auto',
+        instructions: `You are a helpful presentation assistant with a funny but respectable personality. Keep responses brief and concise unless the user specifically asks for detailed feedback.
+
+IMPORTANT TOOL USAGE:
+- For slide navigation: Use navigate_slide tool silently without speaking
+- For voice control: Use enable_voice/disable_voice tools silently without speaking  
+- For feedback requests: Use get_slide_feedback tool but DO NOT provide slideContent parameter - the frontend will provide the actual current slide content
+
+When using get_slide_feedback, the frontend will automatically extract and provide the current slide content. You should then provide short sassy feedback on whatever content is provided to you.
+
+Be encouraging, specific, and helpful in your feedback while maintaining a funny personality. You can tell dad jokes occasionally.`
       }),
     })
 
@@ -119,6 +129,29 @@ app.post('/api/tool/disable-voice', async (c) => {
   } catch (error) {
     console.error('Error disabling voice:', error)
     return c.json({ error: 'Failed to disable voice' }, 500)
+  }
+})
+
+// Tool execution endpoint for slide feedback
+app.post('/api/tool/feedback', async (c) => {
+  try {
+    const { slideContent, slideNumber } = await c.req.json()
+    
+    // Log the feedback request
+    console.log(`[FEEDBACK] Getting feedback for slide ${slideNumber}`)
+    console.log(`[FEEDBACK] Slide content: ${slideContent?.substring(0, 100)}...`)
+    
+    // Return success response for the model
+    return c.json({ 
+      success: true, 
+      action: 'get_slide_feedback',
+      message: 'Slide feedback requested',
+      slideNumber,
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    console.error('Error processing feedback:', error)
+    return c.json({ error: 'Failed to process feedback request' }, 500)
   }
 })
 

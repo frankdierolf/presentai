@@ -37,4 +37,15 @@ export const disableVoiceTool = {
   }
 }
 
-export const tools = [slideNavigationTool, enableVoiceTool, disableVoiceTool]
+export const getFeedbackTool = {
+  type: 'function',
+  name: 'get_slide_feedback',
+  description: 'Get feedback on the current slide content. This function should be called when the user asks for feedback, suggestions, or opinions about their presentation. The frontend will automatically provide the current slide content.',
+  parameters: {
+    type: 'object',
+    properties: {},
+    required: []
+  }
+}
+
+export const tools = [slideNavigationTool, enableVoiceTool, disableVoiceTool, getFeedbackTool]
