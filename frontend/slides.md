@@ -5,12 +5,12 @@ theme: seriph
 # like them? see https://unsplash.com/collections/94734566/slidev
 background: https://cover.sli.dev
 # some information about your slides (markdown enabled)
-title: Welcome to Slidev
+title: Welcome to Presento
 info: |
-  ## Slidev Starter Template
-  Presentation slides for developers.
+  ## Presento - AI-Enhanced Presentations
+  Next-generation presentation platform with voice control.
 
-  Learn more at [Sli.dev](https://sli.dev)
+  Learn more at [Presento.app](https://presento.app)
 # apply unocss classes to the current slide
 class: text-center
 # https://sli.dev/features/drawing
@@ -25,12 +25,12 @@ mdc: true
 #  ogImage: https://cover.sli.dev
 ---
 
-# Welcome to Slidev
+# Welcome to Presento
 
-Presentation slides for developers
+AI-Enhanced Presentation Platform with Voice Control
 
 <div @click="$slidev.nav.next" class="mt-12 py-1" hover:bg="white op-10">
-  Press Space for next page <carbon:arrow-right />
+  Press Space or say "next slide" <carbon:arrow-right />
 </div>
 
 <div class="abs-br m-6 text-xl">
@@ -50,21 +50,47 @@ The last comment block of each slide will be treated as slide notes. It will be 
 transition: fade-out
 ---
 
-# What is Slidev?
+# 🎤 Experience Voice Control
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
+Try our revolutionary AI voice commands right now!
 
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - themes can be shared and re-used as npm packages
+<RealtimeButton />
+
+<div class="mt-8 text-lg">
+  <div class="mb-4">🗣️ **Try saying:**</div>
+  <ul class="list-none space-y-2">
+    <li>• "Next slide" or "Go to the next slide"</li>
+    <li>• "Previous slide" or "Go back"</li>
+    <li>• "Enable voice" for AI responses</li>
+    <li>• "Give me feedback" for slide analysis</li>
+  </ul>
+</div>
+
+<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-sm opacity-70">
+  This is what makes Presento different from every other presentation tool
+</div>
+
+---
+transition: fade-out
+---
+
+# What is Presento?
+
+Presento is an AI-enhanced presentation platform built for the future, featuring revolutionary voice control and all the power of modern web technology:
+
+- 🎤 **AI Voice Control** - navigate slides, get feedback, and interact using natural speech
+- 📝 **Text-based** - focus on content with Markdown, style comes later
+- 🎨 **Themable** - beautiful themes shared as npm packages
 - 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
 - 🤹 **Interactive** - embed Vue components to enhance your expressions
 - 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export to PDF, PPTX, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - virtually anything that's possible on a webpage is possible in Slidev
-<br>
+- 📤 **Portable** - export to PDF, PPTX, PNGs, or hostable SPA
+- 🛠 **Hackable** - virtually anything possible on a webpage is possible in Presento
+- 🤖 **Real-time AI** - powered by OpenAI's latest models for intelligent interaction
+
 <br>
 
-Read more about [Why Slidev?](https://sli.dev/guide/why)
+**Try saying "next slide" to continue the demo!**
 
 <!--
 You can have `style` tag in markdown to override the style for the current page.
@@ -92,11 +118,20 @@ transition: slide-up
 level: 2
 ---
 
-# Navigation
+# Navigation in Presento
 
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/ui#navigation-bar)
+Presento gives you multiple ways to navigate - traditional controls **plus revolutionary voice commands**!
 
-## Keyboard Shortcuts
+## Voice Commands (🎤 AI-Powered)
+
+|                                    |                             |
+| ---------------------------------- | --------------------------- |
+| "Next slide" or "Go forward"       | next animation or slide     |
+| "Previous slide" or "Go back"      | previous animation or slide |
+| "Enable voice" / "Disable voice"   | toggle AI voice responses   |
+| "Give me feedback"                 | AI analysis of current slide|
+
+## Traditional Keyboard Shortcuts
 
 |                                                     |                             |
 | --------------------------------------------------- | --------------------------- |
@@ -104,6 +139,8 @@ Hover on the bottom-left corner to see the navigation's controls panel, [learn m
 | <kbd>left</kbd>  / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
 | <kbd>up</kbd>                                       | previous slide              |
 | <kbd>down</kbd>                                     | next slide                  |
+
+**Try saying "next slide" right now!**
 
 <!-- https://sli.dev/guide/animations.html#click-animation -->
 <img
@@ -267,9 +304,9 @@ const author = {
 <div grid="~ cols-2 gap-4">
 <div>
 
-You can use Vue components directly inside your slides.
+Presento lets you use Vue components directly inside your slides - **and now with voice control**!
 
-We have provided a few built-in components like `<Tweet/>` and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
+We have provided built-in components like `<Tweet/>` and `<Youtube/>`, plus our revolutionary `<RealtimeButton/>` for AI voice interaction. Adding custom components is super easy.
 
 ```html
 <Counter :count="10" />
@@ -306,9 +343,11 @@ Also, HTML elements are valid:
 class: px-20
 ---
 
-# Themes
+# Themes in Presento
 
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
+Presento comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
+
+**Voice tip:** Say "give me feedback" to hear AI analysis of how this theme looks!
 
 <div grid="~ cols-2 gap-2" m="t-2">
 
@@ -335,9 +374,9 @@ check out the [Awesome Themes Gallery](https://sli.dev/resources/theme-gallery).
 
 ---
 
-# Clicks Animations
+# Click Animations in Presento
 
-You can add `v-click` to elements to add a click animation.
+You can add `v-click` to elements to add a click animation - **or use voice commands to trigger them**!
 
 <div v-click>
 
@@ -372,9 +411,11 @@ also allows you to add
 
 ---
 
-# Motions
+# Motions in Presento
 
 Motion animations are powered by [@vueuse/motion](https://motion.vueuse.org/), triggered by `v-motion` directive.
+
+**Voice tip:** Say "give me feedback" to hear AI commentary on these animations!
 
 ```html
 <div
@@ -606,9 +647,9 @@ hide: false
 
 ---
 
-# Monaco Editor
+# Monaco Editor in Presento
 
-Slidev provides built-in Monaco Editor support.
+Presento provides built-in Monaco Editor support - **plus you can ask the AI for code feedback**!
 
 Add `{monaco}` to the code block to turn it into an editor:
 
@@ -635,8 +676,37 @@ layout: center
 class: text-center
 ---
 
-# Learn More
+# Experience Presento
 
-[Documentation](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/resources/showcases)
+The future of presentations is here - **AI-enhanced, voice-controlled, and built for modern workflows**.
 
-<PoweredBySlidev mt-10 />
+<div class="grid grid-cols-2 gap-8 mt-8">
+
+<div>
+
+## 🚀 **Try Presento**
+- [Live Demo](https://demo.presento.app)
+- [Download](https://github.com/frankdierolf/presento)
+- [Documentation](https://docs.presento.app)
+
+</div>
+
+<div>
+
+## 🎤 **Voice Features**
+- Navigate with speech
+- Real-time AI feedback  
+- Natural conversation
+- Intelligent slide analysis
+
+</div>
+
+</div>
+
+<div class="mt-12 text-center">
+
+**Built on Slidev's foundation + OpenAI's cutting-edge Realtime API**
+
+*Say "previous slide" to go back and explore more features!*
+
+</div>
