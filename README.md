@@ -1,8 +1,8 @@
-# 🎯 PresentAI
+# 🎯 Presento
 
 > **AI-Powered Presentation Platform with Real-time Voice Control**
 
-PresentAI is a cutting-edge presentation platform that combines OpenAI's latest AI models with real-time voice control, automated content generation, context awareness, and intelligent interactive chat navigation. Built for the Berlin AI Hackathon, it represents the future of presentation software.
+Presento is a cutting-edge presentation platform that combines OpenAI's latest AI models with real-time voice control, automated content generation, context awareness, and intelligent interactive chat navigation. Built for the Berlin AI Hackathon, it represents the future of presentation software.
 
 ## ✨ Features
 
@@ -71,8 +71,8 @@ PresentAI is a cutting-edge presentation platform that combines OpenAI's latest 
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/frankdierolf/presentai.git
-cd presentai
+git clone https://github.com/frankdierolf/presento.git
+cd presento
 ```
 
 2. **Install dependencies**
@@ -173,7 +173,7 @@ npm start
 ### Project Structure
 
 ```
-presentai/
+presento/
 ├── backend/                 # Hono.js API server
 │   ├── src/
 │   │   ├── index.ts        # Main server file
@@ -424,13 +424,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📧 Email: support@presentai.dev
-- 💬 Discord: [Join our community](https://discord.gg/presentai)
-- 🐛 Issues: [GitHub Issues](https://github.com/frankdierolf/presentai/issues)
-- 📖 Docs: [Documentation](https://docs.presentai.dev)
+- 🌐 Website: [https://presento.app/](https://presento.app/)
+- 📧 Email: support@presento.dev
+- 💬 Discord: [Join our community](https://discord.gg/presento)
+- 🐛 Issues: [GitHub Issues](https://github.com/frankdierolf/presento/issues)
+- 📖 Docs: [Documentation](https://docs.presento.dev)
 
 ---
 
 **Built with ❤️ for the future of presentations**
 
-*PresentAI - Where AI meets presentation excellence*
+*Presento - Where AI meets presentation excellence*
