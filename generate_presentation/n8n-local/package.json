@@ -11,7 +11,9 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "fetch-blob": "^4.0.0",
     "n8n": "^1.102.4",
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.1",
+    "pocketbase": "^0.26.1"
   }
 }

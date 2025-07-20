@@ -1,10 +1,13 @@
 import { useState, useRef } from 'react';
 import './App.css';
+import { processAndUploadPresentation } from './postprocess_markdown'; // Assuming this function is defined in another file
 
 function App() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [summary, setSummary] = useState<string | null>(null);
+  const [showSummary, setShowSummary] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (file: File) => {
@@ -56,10 +59,13 @@ function App() {
   const handleGeneratePresentation = async () => {
     if (!uploadedFile) return;
     setIsUploading(true);
+    setShowSummary(false);
     const formData = new FormData();
+    // get file name
+    const fileName = uploadedFile.name;
     formData.append('file', uploadedFile);
     try {
-      const response = await fetch('http://localhost:5678/webhook-test/upload-summary', {
+      const response = await fetch('http://localhost:5678/webhook/a9c76d3f-10f3-4e2e-9dfe-d98f344bca91', {
         method: 'POST',
         body: formData,
       });
@@ -67,10 +73,12 @@ function App() {
         console.log(`Error: ${response.status} ${response.statusText}`);
         throw new Error('Failed to upload PDF');
       }
-
-      // Optionally handle response
       const result = await response.json();
-      console.log('Presentation generated:', result);
+      result.fileName = fileName.replace('.pdf', ''); // Add file name to result
+      setSummary(result.summary);
+      setTimeout(() => setShowSummary(true), 300); // Delay for animation
+
+      await processAndUploadPresentation(result);
     } catch (error) {
       alert('Error uploading PDF: ' + (error as Error).message);
     }
@@ -143,6 +151,13 @@ function App() {
             <button className="upload-another" onClick={handleUploadClick}>
               Upload Another
             </button>
+          </div>
+        )}
+        {/* Summary Section */}
+        {summary && (
+          <div className={`summary-section${showSummary ? ' fade-in' : ''}`}>
+            <h2>Presentation Summary</h2>
+            <p>{summary}</p>
           </div>
         )}
       </div>

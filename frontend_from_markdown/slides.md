@@ -1,0 +1,5 @@
+<DynamicSlides/>
+
+---
+
+Second slide

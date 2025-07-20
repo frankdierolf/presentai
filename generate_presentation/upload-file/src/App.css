@@ -231,6 +231,38 @@ body {
   transform: translateY(-2px);
 }
 
+.summary-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s cubic-bezier(0.4, 0.2, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+  background: #f8f6ff;
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  margin-top: 2.5rem;
+  box-shadow: 0 12px 40px rgba(118, 75, 162, 0.12);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.summary-section.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.summary-section h2 {
+  color: #764ba2;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.summary-section p {
+  color: #333;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
 @media (max-width: 600px) {
   .upload-container {
     padding: 2rem;
