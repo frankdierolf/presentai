@@ -8,9 +8,6 @@ services:
     container_name: presentai-landing
     restart: unless-stopped
     
-    # Security: Non-root user
-    user: "1001:1001"
-    
     # Resource limits
     deploy:
       resources:
@@ -23,7 +20,7 @@ services:
     
     # Health monitoring
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+      test: curl -f http://localhost:3000/ || exit 1
       interval: 30s
       timeout: 10s
       retries: 3

@@ -24,6 +24,9 @@ RUN pnpm run build
 # Production stage
 FROM node:20-alpine AS production
 
+# Install required system dependencies
+RUN apk add --no-cache curl
+
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
@@ -51,7 +54,7 @@ ENV PORT=3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+    CMD curl -f http://localhost:3000/ || exit 1
 
 # Start the application
 CMD ["node", ".output/server/index.mjs"]
