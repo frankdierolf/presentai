@@ -47,7 +47,7 @@ services:
     
     # Port binding
     ports:
-      - "8080:8080"
+      - "8090:8080"
     
     # Volume configuration for data persistence
     volumes:
