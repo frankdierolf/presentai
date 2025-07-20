@@ -9,9 +9,6 @@ Presento is a cutting-edge presentation platform that combines OpenAI's latest A
 ### 🎤 **Real-time Voice Assistant**
 - **Voice-controlled slide navigation** "next slide", "previous slide", "enable voice"
 - **Conversational AI** powered by GPT-4o-mini
-- **Message feedback system** (like/dislike)
-- **Public chat sharing** with read-only links
-- **Auto-titling** for conversations
 
 ### 📄 **Automated Content Generation**
 - **PDF-to-Slides conversion** using n8n workflows
