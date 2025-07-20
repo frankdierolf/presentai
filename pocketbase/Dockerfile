@@ -45,5 +45,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
     CMD curl --fail http://localhost:8080/api/health || exit 1
 
 # Default command
-ENTRYPOINT ["/pb/pocketbase"]
-CMD ["serve", "--http=0.0.0.0:8080"]
+CMD ["/pb/pocketbase", "serve", "--http=0.0.0.0:8080"]
