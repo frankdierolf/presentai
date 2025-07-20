@@ -1,23 +1,28 @@
 # Production Dockerfile for Pocketbase
 FROM alpine:latest
 
-# Install required packages
-RUN apk add --no-cache ca-certificates tzdata sqlite && \
+# Install required packages including wget for downloading PocketBase
+RUN apk add --no-cache ca-certificates tzdata sqlite wget unzip && \
     addgroup -g 1001 -S pocketbase && \
     adduser -u 1001 -S -G pocketbase pocketbase
 
 # Create necessary directories
 RUN mkdir -p /pb/pb_data /pb/pb_public /pb/pb_hooks /pb/pb_migrations
 
-# Copy the existing pocketbase binary
-COPY --chown=pocketbase:pocketbase ./pocketbase /pb/pocketbase
-RUN chmod +x /pb/pocketbase
+# Download and install PocketBase binary
+ARG POCKETBASE_VERSION=0.22.21
+RUN wget https://github.com/pocketbase/pocketbase/releases/download/v${POCKETBASE_VERSION}/pocketbase_${POCKETBASE_VERSION}_linux_amd64.zip -O /tmp/pocketbase.zip && \
+    unzip /tmp/pocketbase.zip -d /tmp && \
+    mv /tmp/pocketbase /pb/pocketbase && \
+    chmod +x /pb/pocketbase && \
+    rm /tmp/pocketbase.zip && \
+    chown pocketbase:pocketbase /pb/pocketbase
 
 # Copy pb_hooks and ensure proper permissions
 COPY --chown=pocketbase:pocketbase ./pb_hooks /pb/pb_hooks
 
-# Copy existing data (for initial deployment, but volumes will override)
-COPY --chown=pocketbase:pocketbase ./pb_data /pb/pb_data
+# Copy existing data (optional - volumes will override)
+# Skip pb_data copy since it's mounted as a volume and may not exist during build
 
 # Set ownership of all pb directories
 RUN chown -R pocketbase:pocketbase /pb
