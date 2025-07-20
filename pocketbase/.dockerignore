@@ -1,0 +1,57 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+readme.md
+*.md
+!pb_data/types.d.ts
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+
+# Docker files (avoid recursive copying)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Build artifacts
+dist/
+build/
+
+# Environment files (these should be handled via Coolify)
+.env*
+!.env.example
+
+# Backup files
+*.bak
+*.backup
+
+# Test files
+test/
+tests/
+*.test.*
+*.spec.*

@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  pocketbase:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pocketbase
+    restart: unless-stopped
+    
+    # Security: Non-root user
+    user: "1001:1001"
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    # Health monitoring
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    
+    # Environment configuration
+    environment:
+      # Required for AI chat functionality
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      
+      # Encryption key for settings (generate with: openssl rand -hex 16)
+      PB_ENCRYPTION_KEY: ${PB_ENCRYPTION_KEY}
+      
+      # Stripe configuration (based on your webhooks)
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      
+      # Optional: Custom app URL for webhooks
+      APP_URL: ${APP_URL:-http://localhost:8080}
+    
+    # Port binding
+    ports:
+      - "8080:8080"
+    
+    # Volume configuration for data persistence
+    volumes:
+      # Main data persistence - this will preserve your SQLite database
+      - pb_data:/pb/pb_data
+      
+      # Public files (uploads, etc.)
+      - pb_public:/pb/pb_public
+      
+      # Hooks are copied during build, but mount for development
+      - ./pb_hooks:/pb/pb_hooks:ro
+    
+    # Start command with encryption
+    command: [
+      "/pb/pocketbase",
+      "serve",
+      "--http=0.0.0.0:8080",
+      "--encryptionEnv=PB_ENCRYPTION_KEY"
+    ]
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - SETUID
+      - SETGID
+
+# Named volumes for data persistence
+volumes:
+  pb_data:
+    driver: local
+  pb_public:
+    driver: local
