@@ -32,6 +32,15 @@ export default defineNuxtConfig({
     '@formkit/auto-animate/nuxt',
     '@nuxtjs/mdc',
   ],
+  
+  // PostCSS and TailwindCSS v4 configuration
+  postcss: {
+    plugins: {
+      '@tailwindcss/postcss': {},
+      autoprefixer: {},
+    },
+  },
+  
   runtimeConfig: {
     public: {
       pocketbaseUrl: process.env.POCKETBASE_URL,
