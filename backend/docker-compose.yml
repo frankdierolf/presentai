@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: presentai-backend
+    restart: unless-stopped
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    
+    # Health monitoring
+    healthcheck:
+      test: curl -f http://localhost:3000/api/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    
+    # Environment configuration
+    environment:
+      # Node.js environment
+      NODE_ENV: production
+      
+      # OpenAI API key for Realtime API (required)
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      
+      # Optional: Custom CORS origins for frontend communication
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3030,http://127.0.0.1:3030}
+    
+    # Port binding
+    ports:
+      - "3000:3000"
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+
+# Network to connect with other presentai services
+networks:
+  default:
+    name: presentai-network
+    external: false
