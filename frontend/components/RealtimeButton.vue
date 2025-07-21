@@ -54,13 +54,8 @@ let peerConnection = null;
 let dataChannel = null;
 let audioElement = null;
 
-<<<<<<< Updated upstream
-// Backend API base URL
-const API_BASE = 'http://localhost:3001';
-=======
 // Backend API base URL - use environment variable in production
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
->>>>>>> Stashed changes
 
 // Status notification management
 let notificationId = 0;
