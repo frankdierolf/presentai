@@ -1,1 +1,51 @@
-# Voice Agent Co-Presenter\n\n## An AI Assistant for Public Speakers\n\n---\n\n# Agenda\n\n- Why Use a Voice Agent Co-Presenter\n- Core Capabilities\n- Speaker and Audience Benefits\n- How the System Works\n- Live Demonstration Overview\n\n---\n\n# Core Capabilities\n\n- Generate slide content on request, including facts, visuals, and citations\n- Respond to audience questions in real-time using predefined knowledge\n- Navigate slides hands-free using voice commands\n- Offer speaker prompts and transitions during the presentation\n- Capture Q&A interactions for later review\n\n---\n\n# Benefits for Speakers and Audiences\n\n- Makes presentations more interactive and dynamic\n- Reduces the speaker’s cognitive load and reliance on notes\n- Delivers accurate, on-demand information to the audience\n- Enables hands-free operation, enhancing presence and engagement\n\n---\n\n# How the System Works\n\n- The speaker wears a microphone connected to the voice agent\n- The agent uses speech recognition to understand commands or questions\n- Requests are classified and routed through a language model\n- Responses are displayed on screen or spoken aloud\n- The system interacts with slide software and content libraries\n\n---\n\n# Live Demo Flow\n\n- Ask the agent to insert a chart about market trends\n- Simulate an audience question and hear the agent’s response\n- Use voice to move to the next or previous slide\n- Trigger the agent to show post-talk resources on screen\n\n---\n\n## You are trained on data up to October 2023.
+# Voice Agent Co-Presenter
+
+An AI Assistant for Public Speakers
+
+---
+
+# Agenda
+
+- Why Use a Voice Agent Co-Presenter
+- Core Capabilities
+- Speaker and Audience Benefits
+- How the System Works
+- Live Demonstration Overview
+
+---
+
+# Core Capabilities
+
+- Generate slide content on request, including facts, visuals, and citations
+- Respond to audience questions in real time using predefined knowledge
+- Navigate slides hands-free using voice commands
+- Offer speaker prompts and transitions during the presentation
+- Capture Q&A interactions for later review
+
+---
+
+# Benefits for Speakers and Audiences
+
+- Makes presentations more interactive and dynamic
+- Reduces the speaker’s cognitive load and reliance on notes
+- Delivers accurate, on-demand information to the audience
+- Enables hands-free operation, enhancing presence and engagement
+
+---
+
+# How the System Works
+
+- The speaker wears a microphone connected to the voice agent
+- The agent uses speech recognition to understand commands or questions
+- Requests are classified and routed through a language model
+- Responses are displayed on screen or spoken aloud
+- The system interacts with slide software and content libraries
+
+---
+
+# Live Demo Flow
+
+- Ask the agent to insert a chart about market trends
+- Simulate an audience question and hear the agent’s response
+- Use voice to move to the next or previous slide
+- Trigger the agent to show post-talk resources on screen
