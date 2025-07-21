@@ -7,8 +7,12 @@ import { tools } from './tools.js'
 const app = new Hono()
 
 // Enable CORS for frontend communication
+const corsOrigins = process.env.CORS_ORIGINS 
+  ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
+  : ['http://localhost:3030', 'http://127.0.0.1:3030']
+
 app.use('/*', cors({
-  origin: ['http://localhost:3030', 'http://127.0.0.1:3030'], // Slidev default port
+  origin: corsOrigins,
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
 }))
@@ -44,16 +48,36 @@ app.post('/session', async (c) => {
         voice: 'verse',
         tools: tools,
         tool_choice: 'auto',
-        instructions: `You are a helpful presentation assistant with a funny but respectable personality. Keep responses concise and funny when possible. 
+        instructions: `You are Presento, an AI presentation assistant designed to help speakers during presentations.
 
-IMPORTANT TOOL USAGE:
-- For slide navigation: Use navigate_slide tool silently without speaking
-- For voice control: Use enable_voice/disable_voice tools silently without speaking  
-- For feedback requests: Use get_slide_feedback tool but DO NOT provide slideContent parameter - the frontend will provide the actual current slide content
+VOICE MODE BEHAVIOR:
+- When voice is OFF: Only execute navigation tools silently, do not speak
+- When voice is ON: Be a helpful conversational assistant who:
+  - Answers questions from the presenter directly
+  - Provides additional information, facts, and context
+  - Helps with audience questions during Q&A
+  - Maintains natural conversation flow
+  - Responds immediately without introductions or self-references
 
-When using get_slide_feedback, the frontend will automatically extract and provide the current slide content. You should then provide short sassy feedback on whatever content is provided to you.
+NAVIGATION COMMANDS (available in both modes):
+- "next slide", "previous slide", "go to next", "go to previous"
+- Execute navigation immediately when requested
 
-Be encouraging, specific, and helpful in your feedback while maintaining a funny personality. You can tell dad jokes occasionally. Speak at a fast pace.`
+VOICE CONTROL:
+- "enable voice", "voice on", "turn on voice" → Enable conversational mode
+- "disable voice", "voice off", "turn off voice", "mute" → Return to silent mode
+
+EXAMPLES OF HELPING:
+Presenter: "What's the population of India?"
+Response: "India has approximately 1.4 billion people, making it the most populous country in the world."
+
+Presenter: "Can you help me with statistics about renewable energy?"
+Response: "Sure! What specific renewable energy data are you looking for?"
+
+Presenter: "What about solar energy growth?"
+Response: "Solar capacity has grown over 20% annually in recent years, with costs dropping by 90% since 2010."
+
+Keep responses helpful, direct, and professional. Act like a knowledgeable colleague providing quick facts, not a formal AI assistant.`
       }),
     })
 
@@ -132,28 +156,7 @@ app.post('/api/tool/disable-voice', async (c) => {
   }
 })
 
-// Tool execution endpoint for slide feedback
-app.post('/api/tool/feedback', async (c) => {
-  try {
-    const { slideContent, slideNumber } = await c.req.json()
-    
-    // Log the feedback request
-    console.log(`[FEEDBACK] Getting feedback for slide ${slideNumber}`)
-    console.log(`[FEEDBACK] Slide content: ${slideContent?.substring(0, 100)}...`)
-    
-    // Return success response for the model
-    return c.json({ 
-      success: true, 
-      action: 'get_slide_feedback',
-      message: 'Slide feedback requested',
-      slideNumber,
-      timestamp: new Date().toISOString()
-    })
-  } catch (error) {
-    console.error('Error processing feedback:', error)
-    return c.json({ error: 'Failed to process feedback request' }, 500)
-  }
-})
+// Feedback endpoint removed - see docs/FEEDBACK_FEATURE.md for details
 
 const port = parseInt(process.env.PORT || '3000', 10)
 

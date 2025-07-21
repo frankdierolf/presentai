@@ -54,8 +54,8 @@ let peerConnection = null;
 let dataChannel = null;
 let audioElement = null;
 
-// Backend API base URL
-const API_BASE = 'http://localhost:3001';
+// Backend API base URL - use environment variable in production
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
 
 // Status notification management
 let notificationId = 0;
@@ -116,86 +116,7 @@ function disableVoiceMode() {
   }
 }
 
-// Get current slide content for feedback
-function getCurrentSlideContent() {
-  try {
-    // Use Slidev's navigation API to get current slide data
-    const currentSlide = nav.currentSlideRoute.value;
-
-    if (!currentSlide) {
-      return 'Unable to access current slide route';
-    }
-
-    // Try to get content from the slide metadata
-    let slideContent = '';
-
-    // Check if we have slide metadata with content
-    if (currentSlide.meta?.slide) {
-      const slideData = currentSlide.meta.slide;
-
-      // Try to get the raw content (markdown source)
-      if (slideData.content) {
-        slideContent = slideData.content;
-      }
-      // Try to get from note if content is not available
-      else if (slideData.note) {
-        slideContent = `Note: ${slideData.note}`;
-      }
-      // Try frontmatter title
-      else if (slideData.frontmatter?.title) {
-        slideContent = slideData.frontmatter.title;
-      }
-    }
-
-    // If we still don't have content, try to extract from DOM as fallback
-    if (!slideContent || slideContent.trim().length < 5) {
-      const slideElement = document.querySelector('.slidev-page');
-      if (slideElement) {
-        // Clone and clean the element
-        const clonedElement = slideElement.cloneNode(true);
-
-        // Remove unwanted elements
-        const unwantedSelectors = ['.slidev-nav', '.slidev-controls', 'script', 'style', 'button', '.slidev-icon-btn'];
-
-        unwantedSelectors.forEach((selector) => {
-          const elements = clonedElement.querySelectorAll(selector);
-          elements.forEach((el) => el.remove());
-        });
-
-        slideContent = clonedElement.textContent || clonedElement.innerText || '';
-        slideContent = slideContent
-          .replace(/\s+/g, ' ')
-          .replace(/Welcome to Slidev|Presentation slides for developers|Press Space for next page/gi, '')
-          .trim();
-      }
-    }
-
-    // Clean up markdown syntax if present
-    if (slideContent) {
-      slideContent = slideContent
-        .replace(/^#{1,6}\s+/gm, '') // Remove markdown headers
-        .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
-        .replace(/\*(.*?)\*/g, '$1') // Remove italic markdown
-        .replace(/`(.*?)`/g, '$1') // Remove inline code markdown
-        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove links, keep text
-        .replace(/\n\s*\n/g, '\n') // Remove empty lines
-        .replace(/\s+/g, ' ') // Normalize whitespace
-        .trim();
-    }
-
-    // Fallback if still no meaningful content
-    if (!slideContent || slideContent.length < 10) {
-      const slideNumber = nav.currentPage.value;
-      slideContent = `This appears to be slide ${slideNumber} with minimal text content, primarily visual elements, or content that couldn't be extracted.`;
-    }
-
-    console.log('Extracted slide content:', slideContent);
-    return slideContent;
-  } catch (error) {
-    console.error('Error extracting slide content:', error);
-    return `Unable to extract content from slide ${nav.currentPage.value}. This might be a visual-heavy slide.`;
-  }
-}
+// Feedback feature removed - see docs/FEEDBACK_FEATURE.md
 
 // Fetch ephemeral token from backend
 async function fetchEphemeralToken() {
@@ -245,7 +166,7 @@ async function initializeWebRTC() {
       console.log('Data channel opened');
       connected.value = true;
       connecting.value = false;
-      status.value = 'Voice commands ready! Say "next slide", "previous slide", "enable voice", "disable voice", or ask for feedback!';
+      status.value = 'Voice commands ready! Say "next slide", "previous slide", "enable voice", or "disable voice"';
     });
 
     // Handle incoming audio track for voice output
@@ -355,9 +276,6 @@ function handleServerEvent(event) {
                 break;
               case 'disable_voice':
                 handleVoiceControlCall(output, 'disable');
-                break;
-              case 'get_slide_feedback':
-                handleFeedbackCall(output);
                 break;
             }
           }
@@ -479,71 +397,7 @@ async function handleVoiceControlCall(functionCall, action) {
   }
 }
 
-// Handle feedback calls from the model
-async function handleFeedbackCall(functionCall) {
-  try {
-    console.log('Feedback call received:', functionCall);
-
-    // Automatically enable voice mode for feedback
-    if (!voiceModeEnabled.value) {
-      enableVoiceMode();
-    }
-
-    // Get current slide content
-    const slideContent = getCurrentSlideContent();
-    console.log('Current slide content:', slideContent);
-    const slideNumber = nav.currentPage.value;
-
-    addStatusNotification('Analyzing current slide for feedback...', 'info');
-
-    // Execute the feedback tool via backend
-    const response = await fetch(`${API_BASE}/api/tool/feedback`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        slideContent,
-        slideNumber,
-      }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      // Send function result back to the model with slide content
-      const functionResult = {
-        type: 'conversation.item.create',
-        item: {
-          type: 'function_call_output',
-          call_id: functionCall.call_id,
-          output: JSON.stringify({
-            ...result,
-            slideContent,
-            slideNumber,
-            instruction: 'Please provide enthusiastic and constructive feedback on this slide content.',
-          }),
-        },
-      };
-
-      dataChannel.send(JSON.stringify(functionResult));
-
-      // Create a new response to get AI feedback
-      const responseCreate = {
-        type: 'response.create',
-      };
-      dataChannel.send(JSON.stringify(responseCreate));
-
-      addStatusNotification('Getting AI feedback on your slide...', 'success');
-    } else {
-      console.error('Feedback execution failed:', result);
-      addStatusNotification('Failed to get slide feedback', 'error');
-    }
-  } catch (error) {
-    console.error('Failed to handle feedback call:', error);
-    addStatusNotification('Error processing feedback request', 'error');
-  }
-}
+// Feedback handler removed - see docs/FEEDBACK_FEATURE.md
 
 // Disconnect from the session
 function disconnect() {

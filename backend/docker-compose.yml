@@ -34,8 +34,8 @@ services:
       # OpenAI API key for Realtime API (required)
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       
-      # Optional: Custom CORS origins for frontend communication
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3030,http://127.0.0.1:3030}
+      # CORS origins for frontend communication (comma-separated)
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3030,http://127.0.0.1:3030,https://demo.presento.app}
     
     # Port binding
     ports:
