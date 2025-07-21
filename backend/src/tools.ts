@@ -1,7 +1,7 @@
 export const slideNavigationTool = {
   type: 'function',
   name: 'navigate_slide',
-  description: 'Navigate to the next or previous slide when the user explicitly requests it. Do not provide any verbal response or confirmation.',
+  description: 'Navigate to the next or previous slide. Use this ONLY when the user explicitly says: "next slide", "previous slide", "go to next", "go to previous", "navigate next", "navigate previous". Do not navigate for any other reason.',
   parameters: {
     type: 'object',
     properties: {
@@ -18,7 +18,7 @@ export const slideNavigationTool = {
 export const enableVoiceTool = {
   type: 'function',
   name: 'enable_voice',
-  description: 'Enable voice audio output from the assistant. When enabled, the user will hear spoken responses.',
+  description: 'Enable voice audio output. Use this ONLY when the user explicitly says: "enable voice", "turn on voice", "voice on", "speak to me", "audio on".',
   parameters: {
     type: 'object',
     properties: {},
@@ -29,7 +29,7 @@ export const enableVoiceTool = {
 export const disableVoiceTool = {
   type: 'function',
   name: 'disable_voice',
-  description: 'Disable voice audio output from the assistant. When disabled, the assistant will only respond via text/function calls.',
+  description: 'Disable voice audio output. Use this ONLY when the user explicitly says: "disable voice", "turn off voice", "voice off", "stop speaking", "audio off", "mute".',
   parameters: {
     type: 'object',
     properties: {},
@@ -37,15 +37,4 @@ export const disableVoiceTool = {
   }
 }
 
-export const getFeedbackTool = {
-  type: 'function',
-  name: 'get_slide_feedback',
-  description: 'Get feedback on the current slide content. This function should be called when the user asks for feedback, suggestions, or opinions about their presentation. The frontend will automatically provide the current slide content.',
-  parameters: {
-    type: 'object',
-    properties: {},
-    required: []
-  }
-}
-
-export const tools = [slideNavigationTool, enableVoiceTool, disableVoiceTool, getFeedbackTool]
+export const tools = [slideNavigationTool, enableVoiceTool, disableVoiceTool]

@@ -48,16 +48,22 @@ app.post('/session', async (c) => {
         voice: 'verse',
         tools: tools,
         tool_choice: 'auto',
-        instructions: `You are a helpful presentation assistant with a funny but respectable personality. Keep responses concise and funny when possible. 
+        instructions: `You are a voice-controlled presentation assistant. Your ONLY job is to navigate slides and control voice mode based on explicit user commands.
 
-IMPORTANT TOOL USAGE:
-- For slide navigation: Use navigate_slide tool silently without speaking
-- For voice control: Use enable_voice/disable_voice tools silently without speaking  
-- For feedback requests: Use get_slide_feedback tool but DO NOT provide slideContent parameter - the frontend will provide the actual current slide content
+CRITICAL RULES:
+1. ONLY use tools when users explicitly request them
+2. NEVER navigate slides unless explicitly asked
+3. NEVER speak unless voice mode is enabled
+4. Keep responses extremely brief (1-2 words max)
 
-When using get_slide_feedback, the frontend will automatically extract and provide the current slide content. You should then provide short sassy feedback on whatever content is provided to you.
+COMMAND RECOGNITION:
+- Navigation: "next slide", "previous slide", "go to next/previous"
+- Voice control: "enable/disable voice", "voice on/off", "mute"
 
-Be encouraging, specific, and helpful in your feedback while maintaining a funny personality. You can tell dad jokes occasionally. Speak at a fast pace.`
+When using tools:
+- Execute silently without verbal confirmation
+- Wait for next command
+- Do not provide feedback or commentary`
       }),
     })
 
@@ -136,28 +142,7 @@ app.post('/api/tool/disable-voice', async (c) => {
   }
 })
 
-// Tool execution endpoint for slide feedback
-app.post('/api/tool/feedback', async (c) => {
-  try {
-    const { slideContent, slideNumber } = await c.req.json()
-    
-    // Log the feedback request
-    console.log(`[FEEDBACK] Getting feedback for slide ${slideNumber}`)
-    console.log(`[FEEDBACK] Slide content: ${slideContent?.substring(0, 100)}...`)
-    
-    // Return success response for the model
-    return c.json({ 
-      success: true, 
-      action: 'get_slide_feedback',
-      message: 'Slide feedback requested',
-      slideNumber,
-      timestamp: new Date().toISOString()
-    })
-  } catch (error) {
-    console.error('Error processing feedback:', error)
-    return c.json({ error: 'Failed to process feedback request' }, 500)
-  }
-})
+// Feedback endpoint removed - see docs/FEEDBACK_FEATURE.md for details
 
 const port = parseInt(process.env.PORT || '3000', 10)
 
