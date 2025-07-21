@@ -1,7 +1,7 @@
 export const slideNavigationTool = {
   type: 'function',
   name: 'navigate_slide',
-  description: 'Navigate to the next or previous slide. Use this ONLY when the user explicitly says: "next slide", "previous slide", "go to next", "go to previous", "navigate next", "navigate previous". Do not navigate for any other reason.',
+  description: 'Navigate to the next or previous slide when the user requests navigation. Common phrases: "next slide", "previous slide", "go to next", "go to previous", "move forward", "go back".',
   parameters: {
     type: 'object',
     properties: {
@@ -18,7 +18,7 @@ export const slideNavigationTool = {
 export const enableVoiceTool = {
   type: 'function',
   name: 'enable_voice',
-  description: 'Enable voice audio output. Use this ONLY when the user explicitly says: "enable voice", "turn on voice", "voice on", "speak to me", "audio on".',
+  description: 'Enable conversational voice mode where Presento becomes an active assistant. Triggered by: "enable voice", "voice on", "turn on voice", "activate Presento".',
   parameters: {
     type: 'object',
     properties: {},
@@ -29,7 +29,7 @@ export const enableVoiceTool = {
 export const disableVoiceTool = {
   type: 'function',
   name: 'disable_voice',
-  description: 'Disable voice audio output. Use this ONLY when the user explicitly says: "disable voice", "turn off voice", "voice off", "stop speaking", "audio off", "mute".',
+  description: 'Disable voice mode and return to silent navigation-only mode. Triggered by: "disable voice", "voice off", "turn off voice", "mute", "silent mode".',
   parameters: {
     type: 'object',
     properties: {},
