@@ -8,7 +8,11 @@ const app = new Hono()
 
 // Enable CORS for frontend communication
 app.use('/*', cors({
-  origin: ['http://localhost:3030', 'http://127.0.0.1:3030'], // Slidev default port
+  origin: [
+    'http://localhost:3030', 
+    'http://127.0.0.1:3030', // Slidev default port
+    ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [])
+  ],
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
 }))
