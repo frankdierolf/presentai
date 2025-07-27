@@ -1,10 +1,10 @@
 {
-  "name": "My workflow",
+  "name": "My workflow copy 2",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "upload-summary",
+        "path": "a9c76d3f-10f3-4e2e-9dfe-d98f344bca91",
         "responseMode": "responseNode",
         "options": {
           "responseHeaders": {
@@ -17,7 +17,7 @@
           }
         }
       },
-      "id": "3b937c7e-7a16-4b30-b1db-ab7cd0bc7f9e",
+      "id": "144441b8-f7d9-450e-b049-69dfe942c289",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
@@ -25,12 +25,12 @@
         0,
         -16
       ],
-      "webhookId": "8878d28b-16b3-4375-b412-d6e7ab6f69b4"
+      "webhookId": "a9c76d3f-10f3-4e2e-9dfe-d98f344bca91"
     },
     {
       "parameters": {
         "resource": "chat",
-        "model": "gpt-4o",
+        "model": "=gpt-4o",
         "prompt": {
           "messages": [
             {
@@ -42,7 +42,7 @@
         "options": {},
         "requestOptions": {}
       },
-      "id": "f1325800-b3b5-4b28-8736-839fbad4499f",
+      "id": "b19dba88-9ebb-4312-9fa5-84ad69371bd8",
       "name": "OpenAI Summary",
       "type": "n8n-nodes-base.openAi",
       "typeVersion": 1,
@@ -75,10 +75,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        1360,
+        1856,
         -16
       ],
-      "id": "f0ad906b-e51e-48e8-a3b4-69bce8aa28be",
+      "id": "fc0c0c72-06ed-497f-903f-c1f792db8e94",
       "name": "Respond to Webhook"
     },
     {
@@ -93,12 +93,12 @@
         224,
         -16
       ],
-      "id": "6aa9f8b1-7999-4804-8a93-28a865b2c021",
+      "id": "ea1f5217-2200-4e59-80eb-71b6d37c6137",
       "name": "Extract from File"
     },
     {
       "parameters": {
-        "jsCode": "return {\n  \"json\": {\n    \"prompts\":   [`Summarize the following content in 3-5 sentences:\\n\\n${$input.first().json.text}`,\n    `You are an assistant that transforms raw text into a Slidev-compatible Markdown slide deck.\n\nPlease follow these rules:\n- Use Slidev formatting: separate each slide with exactly \"---\" on its own line.\n- Use \"#\" for main slide titles.\n- Use \"##\" or \"###\" for subheadings and structure.\n- Use bullet lists (\"-\") and bold text (\"**\") as needed.\n- Ensure each slide is self-contained, concise, and clean.\n- Output a valid Slidev Markdown file without extra explanations.\n\nHere is the source text::\\n\\n${$input.first().json.text}`]\n  }\n}"
+        "jsCode": "return {\n  \"json\": {\n    \"prompts\":   [`You are an assistant that transforms raw text into a Slidev-compatible Markdown slide deck.\n\nPlease follow these rules:\n- Use Slidev formatting: separate each slide with exactly \"---\" on its own line.\n- Use \"#\" for main slide titles.\n- Use \"##\" or \"###\" for subheadings and structure.\n- Use bullet lists (\"-\") and bold text (\"**\") as needed.\n- Ensure each slide is self-contained, concise, and clean.\n- Output a valid Slidev Markdown file without extra explanations.\n\nHere is the source text::\\n\\n${$input.first().json.text}`,\n`Summarize the following content in 3-5 sentences:\\n\\n${$input.first().json.text}`\n    ]\n  }\n}"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -106,7 +106,7 @@
         448,
         -16
       ],
-      "id": "71994416-f7aa-45f4-9177-e3ff05997b9b",
+      "id": "ad11f51c-a2aa-4199-8fc2-358357a1d97e",
       "name": "Get Prompts"
     },
     {
@@ -120,21 +120,67 @@
         672,
         -16
       ],
-      "id": "92f2c2bd-6ad5-4218-868f-1e2138854f46",
+      "id": "04c09f3f-5d33-4510-89fb-0c1cf113e928",
       "name": "Split Out"
     },
     {
       "parameters": {
-        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nlet index = 0\nconst results = {} \nfor (const item of $input.all()) {\n  const content = item.json.message.content\n  if (index === 0){\n    results.summary =content\n  } else if (index === 1){\n    results.presentation = content\n  }\n  index += 1\n}\n\nreturn { \"json\": {results}}"
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nlet index = 0\nconst results = {} \nfor (const item of $input.all()) {\n  if (index === 0){\n    results.presentation = item.json.message.cleaned\n  } else if (index === 1){\n    results.summary = item.json.message.content\n  }\n  index += 1\n}\n\nreturn { \"json\": {results}}"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1104,
+        1488,
         -16
       ],
-      "id": "7e4e61f9-0ec1-4f88-aac5-6a8b00130d70",
+      "id": "c46c70ce-f2a6-4f4e-8983-62fae30922c6",
       "name": "Code"
+    },
+    {
+      "parameters": {
+        "content": "## TODOs\n- Convert to proper markdown\n- Upload text to file storage, save as .md\n- Ask for theme\n- Button for redirect\n- Download .md when page loaded",
+        "height": 272
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1152,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "3a3f10bf-2c08-427b-ab36-067a60511247",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst item = $input.first().json.message\nconst content = item.content\nlet cleaned = ''\ntry {\n  const unescaped = JSON.parse(content)\n  cleaned = unescaped\n    .replace(/^```markdown\\s*/, '') // remove starting triple backticks and markdown\n    .replace(/\\s*```$/, '')         // remove ending triple backticks\n  item.cleaned = cleaned\n} catch (e) {\n  console.log('Invalid JSON, skipping cleanup')\n  item.cleaned = content\n}\n\nreturn $input.all()"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        -16
+      ],
+      "id": "c3394b1d-2589-4cbe-8d0f-268aab49c9c4",
+      "name": "Postprocess Markdown"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "message.cleaned",
+        "binaryPropertyName": "file",
+        "options": {
+          "fileName": "slides.md"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1424,
+        288
+      ],
+      "id": "d9db7d37-b395-42d1-933a-ea1a2c785f6a",
+      "name": "Convert to File",
+      "executeOnce": true
     }
   ],
   "pinData": {},
@@ -154,7 +200,7 @@
       "main": [
         [
           {
-            "node": "Code",
+            "node": "Postprocess Markdown",
             "type": "main",
             "index": 0
           }
@@ -209,17 +255,33 @@
           }
         ]
       ]
+    },
+    "Postprocess Markdown": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        []
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "9dcc738c-435f-4c7a-a8ab-e83b9ed80e68",
+  "versionId": "78274465-1588-4f16-be4d-041efbd08a26",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "270e5bcdd2d27d129e2a5941654814a3271904a168cb8962f01525235e4a5f5b"
   },
-  "id": "hOmt57qxbAru82Jv",
+  "id": "gtClmAOUFpJoWqwl",
   "tags": []
 }
